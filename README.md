@@ -8,8 +8,8 @@ The script will output a file called `results.csv` which contains the polyA coun
 
 The `results.csv` file follows the below format:
 ```csv
-isolate,polya_count
-4954-98,33
+isolate,polya_count,promoter_region_count
+4954-98,33,2255
 ```
 
 ## Setup

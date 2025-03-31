@@ -6,6 +6,7 @@ import re
 from Bio import SeqIO
 from Bio.Seq import Seq
 
+region_count = 0
 polya_count = 0
 fasta_file = sys.argv[1]
 genbank_file = sys.argv[2]
@@ -56,6 +57,8 @@ for i in range(1, (sum(1 for _ in SeqIO.parse(fasta_file, "fasta")) + 1)):
     gb_features = read_genbank(genbank_file, i)
     for feature in gb_features:
         if feature.type == "CDS":
-            polya_count += get_polya_count(feature)  
+            polya_count += get_polya_count(feature)
+            if int(feature.location.start) >=100:
+                region_count += 1
 
-print(polya_count)       
+print(f"{polya_count},{region_count}")

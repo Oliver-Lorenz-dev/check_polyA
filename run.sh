@@ -2,7 +2,7 @@
 
 unzip -qq data.zip
 
-echo "isolate,polya_count" > results.csv
+echo "isolate,polya_count,promoter_region_count" > results.csv
 
 for f in data/*.fna
 do
