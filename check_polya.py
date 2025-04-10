@@ -52,13 +52,51 @@ def get_polya_count(feature) -> int:
         polya_count = len(re.findall(match_pattern, str(upstream_sequence)))
     return polya_count
 
+
 for i in range(1, (sum(1 for _ in SeqIO.parse(fasta_file, "fasta")) + 1)):
     sequence = read_fasta(fasta_file, i)
     gb_features = read_genbank(genbank_file, i)
+    feature_counter = 0
+    cds_features = list()
+    # get cds features
     for feature in gb_features:
         if feature.type == "CDS":
-            polya_count += get_polya_count(feature)
-            if int(feature.location.start) >=100:
-                region_count += 1
+            cds_features.append(feature)
+    
+    # check polya for cds features
+    for feature in cds_features:
+        if feature.location.start > 100:
+            feature_counter += 1
+            if feature_counter >= 2:
+                # if gene on positive strand, check if previous gene end point is > 100 than this gene start point
+                # only if this is the case check for polyA in 100bp upstream promoter region
+                if feature.location.strand == 1:
+                    start = int(feature.location.start)
+                    end = int(feature.location.end)
+                    prev_gene_end = cds_features[feature_counter - 1].location.end
+                    if start - prev_gene_end > 100:
+                        region_count += 1
+                        polya_count += get_polya_count(feature)
+                # if gene on reverse strand, check if next gene start point is > 100 than this gene start point
+                # only if this is the case, rev comp then check for polyA in 100bp upstream promoter region
+                else:
+                    if feature_counter < (len(cds_features)-1):
+                        start = int(feature.location.end)
+                        end = int(feature.location.start)
+                        prev_gene_start = cds_features[feature_counter + 1].location.start
+                        if prev_gene_start - start > 100:
+                            region_count += 1
+                            polya_count += get_polya_count(feature)
+
 
 print(f"{polya_count},{region_count}")
+
+#with open("test.fa", 'r') as f:
+#    lines = f.readlines()
+#        
+#    sequence = ''.join(line.strip() for line in lines if not line.startswith('>'))
+#
+#    query_sequence = 'AGTATACTTTTTTTTTTTAGTATTTCAA'
+#    index  = sequence.find(query_sequence)
+#
+#    print(f"Match found: Start = {index}, End = {index + len(query_sequence) - 1}")
