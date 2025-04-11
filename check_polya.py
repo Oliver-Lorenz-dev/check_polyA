@@ -39,16 +39,18 @@ def read_genbank(genbank_file: str, contig_num: int) -> list:
                 return features
             i += 1
 
-def get_polya_count(feature) -> int:
+def get_polya_count(feature, feature2) -> int:
     polya_count = 0
     match_pattern = r'A{8,}'
     start = int(feature.location.start)
     end = int(feature.location.end)
+    next_start = int(feature2.location.start)
     if start >= 100:
         if feature.location.strand == 1:
             upstream_sequence = sequence[(start - 100): (start)]
         elif feature.location.strand == -1:
-            upstream_sequence = sequence[(end): (end + 100)].reverse_complement()
+            upstream_sequence = str(sequence[(end): (next_start)].reverse_complement())
+            print(upstream_sequence)
         polya_count = len(re.findall(match_pattern, str(upstream_sequence)))
     return polya_count
 
@@ -76,7 +78,7 @@ for i in range(1, (sum(1 for _ in SeqIO.parse(fasta_file, "fasta")) + 1)):
                     prev_gene_end = cds_features[feature_counter - 1].location.end
                     if start - prev_gene_end > 100:
                         region_count += 1
-                        polya_count += get_polya_count(feature)
+                        polya_count += get_polya_count(feature, cds_features[feature_counter - 1])
                 # if gene on reverse strand, check if next gene start point is > 100 than this gene start point
                 # only if this is the case, rev comp then check for polyA in 100bp upstream promoter region
                 else:
@@ -86,7 +88,8 @@ for i in range(1, (sum(1 for _ in SeqIO.parse(fasta_file, "fasta")) + 1)):
                         prev_gene_start = cds_features[feature_counter + 1].location.start
                         if prev_gene_start - start > 100:
                             region_count += 1
-                            polya_count += get_polya_count(feature)
+                            print(start)
+                            polya_count += get_polya_count(feature, cds_features[feature_counter + 1])
 
 
 print(f"{polya_count},{region_count}")
