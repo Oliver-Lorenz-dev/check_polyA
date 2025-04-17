@@ -49,8 +49,7 @@ def get_polya_count(feature, feature2) -> int:
         if feature.location.strand == 1:
             upstream_sequence = sequence[(start - 100): (start)]
         elif feature.location.strand == -1:
-            upstream_sequence = str(sequence[(end): (next_start)].reverse_complement())
-            print(upstream_sequence)
+            upstream_sequence = str(sequence[(end): (end + 100)].reverse_complement())
         polya_count = len(re.findall(match_pattern, str(upstream_sequence)))
     return polya_count
 
@@ -88,18 +87,7 @@ for i in range(1, (sum(1 for _ in SeqIO.parse(fasta_file, "fasta")) + 1)):
                         prev_gene_start = cds_features[feature_counter + 1].location.start
                         if prev_gene_start - start > 100:
                             region_count += 1
-                            print(start)
                             polya_count += get_polya_count(feature, cds_features[feature_counter + 1])
 
 
 print(f"{polya_count},{region_count}")
-
-#with open("test.fa", 'r') as f:
-#    lines = f.readlines()
-#        
-#    sequence = ''.join(line.strip() for line in lines if not line.startswith('>'))
-#
-#    query_sequence = 'AGTATACTTTTTTTTTTTAGTATTTCAA'
-#    index  = sequence.find(query_sequence)
-#
-#    print(f"Match found: Start = {index}, End = {index + len(query_sequence) - 1}")
