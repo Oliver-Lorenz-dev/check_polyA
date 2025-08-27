@@ -51,6 +51,9 @@ def get_polya_count(feature, feature2) -> int:
         elif feature.location.strand == -1:
             upstream_sequence = str(sequence[(end): (end + 100)].reverse_complement())
         polya_count = len(re.findall(match_pattern, str(upstream_sequence)))
+        if polya_count > 0:
+            print(feature)
+            print(feature.qualifiers)
     return polya_count
 
 

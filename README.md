@@ -4,12 +4,19 @@ Python script which checks for polyA monomers 100bp upstream of CDS regions (AAA
 ## Description
 This script checks sequences for polyA monomers 100bp upstream of CDS regions (AAAAAAAA)
 
-The script will output a file called `results.csv` which contains the polyA count for each isolate in `data.zip`
+The script will output a file called `polya_count.csv` which contains the polyA count for each isolate in `data.zip`
 
-The `results.csv` file follows the below format:
+The `polya_count.csv` file follows the below format:
 ```csv
 isolate,polya_count,promoter_region_count
 4954-98,33,2255
+```
+
+The script also produces a file which contains the genbank records for each gene with a polyA monomer in the promoter region: `genes.csv`
+The file format is as follows:
+```csv
+isolate,genbank_record
+4954-98,{'gene': ['spxA2'], 'locus_tag': ['KKBGAPLG_00204'], 'inference': ['ab initio prediction:Prodigal:002006'], 'codon_start': ['1'], 'transl_table': ['11'], 'product': ['Transcriptional regulator SpxA2'], 'protein_id': ['Prokka:KKBGAPLG_00204'], 'translation': ['MIKIYTVSSCTSCKKAKTWLNAHQLSYKEQNLGKEGITREELLDILTKTDNGIASIVSSKNRYAKALGVDIEDLSVNEVLNLIMETPRILKSPILVDEKRLQVGYKEDDIRAFLPRSVRNVENAEARLRAAL']}
 ```
 
 ## Setup
